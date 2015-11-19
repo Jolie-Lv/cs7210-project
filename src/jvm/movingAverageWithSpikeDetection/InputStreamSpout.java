@@ -1,4 +1,4 @@
-package movingAverage;
+package movingAverageWithSpikeDetection;
 
 import java.util.Map;
 import java.util.Random;
@@ -19,7 +19,6 @@ public class InputStreamSpout implements IRichSpout {
 	
 	private final Random random = new Random();
 
-	@Override
 	public boolean isDistributed() {
 		return true;
 	}
@@ -59,6 +58,24 @@ public class InputStreamSpout implements IRichSpout {
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
 		declarer.declare(new Fields("string","double"));
+	}
+
+	@Override
+	public void activate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deactivate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

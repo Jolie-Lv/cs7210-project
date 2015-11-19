@@ -1,4 +1,4 @@
-package movingAverage;
+package movingAverageWithSpikeDetection;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -70,5 +70,11 @@ public class MovingAverageBolt implements IBasicBolt {
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
 		declarer.declare(new Fields("string", "double", "double"));
+	}
+
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

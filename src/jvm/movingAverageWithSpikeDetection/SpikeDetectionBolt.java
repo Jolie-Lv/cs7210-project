@@ -1,4 +1,4 @@
-package movingAverage;
+package movingAverageWithSpikeDetection;
 
 
 import java.util.Map;
@@ -46,5 +46,11 @@ public class SpikeDetectionBolt implements IBasicBolt {
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
 		declarer.declare(new Fields("string", "double", "double", "string"));
+	}
+
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

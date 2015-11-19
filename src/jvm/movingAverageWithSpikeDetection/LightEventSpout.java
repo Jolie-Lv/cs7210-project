@@ -1,4 +1,4 @@
-package movingAverage;
+package movingAverageWithSpikeDetection;
 
 import java.util.Map;
 
@@ -41,7 +41,6 @@ public class LightEventSpout implements IRichSpout, SerialPortEventListener {
 	private String deviceID = "Arduino";
 	private BlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<Integer>();
 
-	@Override
 	public boolean isDistributed() {
 		return true;
 	}
@@ -169,6 +168,24 @@ public class LightEventSpout implements IRichSpout, SerialPortEventListener {
 		}
 		// Ignore all the other eventTypes, but you should consider the other ones.
 		
+	}
+
+	@Override
+	public void activate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deactivate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
