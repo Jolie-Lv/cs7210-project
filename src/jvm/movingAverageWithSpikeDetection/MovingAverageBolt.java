@@ -69,7 +69,7 @@ public class MovingAverageBolt implements IBasicBolt {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		//declarer.declare(new Fields("string", "double", "double"));
+		declarer.declare(new Fields("string", "double", "double"));
 	}
 
 	@Override
