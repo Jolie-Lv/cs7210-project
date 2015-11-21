@@ -26,7 +26,7 @@ public class LightEventSpout implements IRichSpout, SerialPortEventListener {
 	SerialPort serialPort;
 	    /** The port we're normally going to use. */
 	private static final String PORT_NAMES[] = { 
-			"/dev/tty.usbmodemfa131", // Mac OS X
+			"/dev/cu.usbmodem1421", // Arduino
 			};
 	/** Buffered input stream from the port */
 	private InputStream input;
