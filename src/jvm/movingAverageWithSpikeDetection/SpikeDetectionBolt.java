@@ -45,7 +45,7 @@ public class SpikeDetectionBolt implements IBasicBolt {
 	
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("string", "double", "double", "string"));
+		declarer.declare(new Fields("string1", "double1", "double2", "string2"));
 	}
 
 	@Override
