@@ -156,7 +156,7 @@ public class LightEventSpout implements IRichSpout, SerialPortEventListener {
 						j++;
 					}
 					j++;
-					System.out.println(new String(number));
+					//System.out.println(new String(number));
 					count = 0;
 					blockingQueue.add(Integer.parseInt(new String(number)));
 				}

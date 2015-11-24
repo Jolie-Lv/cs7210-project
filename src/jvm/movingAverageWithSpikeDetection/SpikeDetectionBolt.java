@@ -10,6 +10,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
+import org.joda.time.DateTime;
 
 public class SpikeDetectionBolt implements IBasicBolt {
 
@@ -35,7 +36,12 @@ public class SpikeDetectionBolt implements IBasicBolt {
 		final double nextDouble = tuple.getDouble(2);
 		if (Math.abs(nextDouble - movingAverageInstant) > spikeThreshold * movingAverageInstant) {
 			collector.emit(new Values(deviceID, movingAverageInstant, nextDouble, "spike detected"));
-			System.out.println(deviceID + "  " + movingAverageInstant + "   " + nextDouble  + " spike detected");
+			
+			/**
+			 * TODO: ML model udpate.
+			 */
+			DateTime currTime = new DateTime();
+			System.out.println(deviceID + "  " + movingAverageInstant + "   " + nextDouble  + " spike detected at : " + currTime.toString());
 		}
 	}
 

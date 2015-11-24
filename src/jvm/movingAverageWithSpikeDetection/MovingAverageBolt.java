@@ -35,7 +35,7 @@ public class MovingAverageBolt implements IBasicBolt {
 		final String deviceID = tuple.getString(0);
 		final double nextDouble = (double)tuple.getInteger(1);
 		double movingAvergeInstant = movingAverage(deviceID, nextDouble);
-		System.out.println(movingAvergeInstant + " : " + nextDouble);
+		//System.out.println(movingAvergeInstant + " : " + nextDouble);
 		collector.emit(new Values(deviceID, movingAvergeInstant, nextDouble));
 	}
 	
