@@ -2,5 +2,3 @@
 
 * storm-starter from: https://github.com/nathanmarz/storm-starter
 * storm example from: https://github.com/stormprocessor/storm-examples
-* kszr and nicky eira, dist fall '15
-
