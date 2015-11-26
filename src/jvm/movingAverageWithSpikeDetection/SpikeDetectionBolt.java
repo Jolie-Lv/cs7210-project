@@ -40,8 +40,7 @@ public class SpikeDetectionBolt implements IBasicBolt {
 			/**
 			 * TODO: ML model udpate.
 			 */
-			DateTime currTime = new DateTime();
-			System.out.println(deviceID + "  " + movingAverageInstant + "   " + nextDouble  + " spike detected at : " + currTime.toString());
+			System.out.println(deviceID + "  " + movingAverageInstant + "   " + nextDouble  + " spike detected at : " + (new DateTime()).toString());
 		}
 	}
 
