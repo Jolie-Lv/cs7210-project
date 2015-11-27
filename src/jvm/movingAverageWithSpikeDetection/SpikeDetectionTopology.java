@@ -15,9 +15,6 @@ import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 import java.util.Map;
 
-/**
- * This is a basic example of a Storm topology.
- */
 public class SpikeDetectionTopology {
     
     public static void main(String[] args) throws Exception {
@@ -30,7 +27,7 @@ public class SpikeDetectionTopology {
         .shuffleGrouping("movingAverage");
         
         Config conf = new Config();
-//        conf.setDebug(true);
+        // conf.setDebug(true);
        
         
         if(args!=null && args.length > 0) {
