@@ -14,7 +14,7 @@ public class InputStreamSpout implements IRichSpout {
 	private static final long serialVersionUID = 1L;
 
 	private SpoutOutputCollector collector;
-	private int count = 1000000;  
+	private int count = 1000000; //If, for some reason, you don't like infinite loops.
 	private String deviceID = "Arduino";
 	
 	private final Random random = new Random();
@@ -31,21 +31,20 @@ public class InputStreamSpout implements IRichSpout {
 
 	@Override
 	public void nextTuple() {		
-		if (count-- > 0) {
-			/**
-			 * Trying to reduce the number of spikes in this fake stream.
-			 */
-			double randomometer = random.nextDouble();
-			double tolerance = 0.999; //Change this to limit the number of spikes that appear.
-			if(randomometer - tolerance >= 0)
-				randomometer *= 10.0;
-			else
-				randomometer *= 2.0;
-			collector.emit(new Values(deviceID, randomometer + 50));
-			//collector.emit(new Values(deviceID, (random.nextDouble() * 10) + 50));			
-		} else if (count-- == -1) {
-			collector.emit(new Values(deviceID, -1.0));
-		}
+		//for(; count > 0 ; count--) {
+		/**
+		 * Trying to reduce the number of spikes in this fake stream.
+		 */
+		double randomometer = random.nextDouble();
+		double tolerance = 0.999; //Change this to limit the number of spikes that appear.
+		if(randomometer - tolerance >= 0)
+			randomometer *= 10.0;
+		else
+			randomometer *= 2.0;
+		collector.emit(new Values(deviceID, randomometer + 50));
+		//collector.emit(new Values(deviceID, (random.nextDouble() * 10) + 50));			
+		//}
+		//collector.emit(new Values(deviceID, -1.0));
 		/**
 		 * Comment out this block if you want instant results instead of plausible ones.
 		 */
