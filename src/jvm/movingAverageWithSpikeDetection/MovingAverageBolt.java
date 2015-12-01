@@ -33,7 +33,8 @@ public class MovingAverageBolt implements IBasicBolt {
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final String deviceID = tuple.getString(0);
-		final double nextDouble = (double)tuple.getInteger(1);
+		final double nextDouble = tuple.getDouble(1);	//Comment this line out and uncomment the next, if using actual Arduino.
+		//final double nextDouble = (double)tuple.getInteger(1);
 		double movingAvergeInstant = movingAverage(deviceID, nextDouble);
 		//System.out.println(movingAvergeInstant + " : " + nextDouble);
 		collector.emit(new Values(deviceID, movingAvergeInstant, nextDouble));

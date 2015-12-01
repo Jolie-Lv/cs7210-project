@@ -20,7 +20,8 @@ public class SpikeDetectionTopology {
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
         
-        builder.setSpout("string", new LightEventSpout(), 2);        
+        //builder.setSpout("string", new LightEventSpout(), 2);    
+        builder.setSpout("string", new InputStreamSpout(), 2);	//In the absence of actual hardware.
         builder.setBolt("movingAverage", new MovingAverageBolt(10), 2)
                 .shuffleGrouping("string");
         builder.setBolt("spikes", new SpikeDetectionBolt(0.10f), 2)
