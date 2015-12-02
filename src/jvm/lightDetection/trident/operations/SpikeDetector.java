@@ -12,8 +12,21 @@ import storm.trident.operation.TridentCollector;
 import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 
+/**
+ * An aggregator that detects spikes.
+ * @author abhishekchatterjee
+ *
+ */
 public class SpikeDetector implements Aggregator<Map<String, String>> {
 	private float spikeThreshold = 0.03f;
+	
+	public SpikeDetector() {
+		
+	}
+	
+	public SpikeDetector(float spikeThreshold) {
+		this.spikeThreshold = spikeThreshold;
+	}
 
 	@Override
 	public void prepare(Map conf, TridentOperationContext context) {
@@ -39,9 +52,9 @@ public class SpikeDetector implements Aggregator<Map<String, String>> {
 		List<Double> pair = map.get(device_id);
 		double avg = pair.get(0);
 		double last_val = pair.get(1);
-		String msg = "";
+		String msg = ": avg = " + avg + "   last_val = " + last_val;
 		if (Math.abs(last_val - avg) > spikeThreshold * avg)
-			msg = device_id + ": avg = " + avg + "   last_val = " + last_val + "   spike detected at : " + (new DateTime()).toString();
+			msg += "   spike detected at : " + (new DateTime()).toString();
 		val.put(device_id, msg);
 	}
 

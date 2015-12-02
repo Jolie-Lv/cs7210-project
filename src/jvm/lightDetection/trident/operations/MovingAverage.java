@@ -15,7 +15,8 @@ import storm.trident.tuple.TridentTuple;
 
 /**
  * An Aggregator that computes the average value associated with a deviceID over a moving window.
- * 
+ * Having a List<Double> was the only way I could think of to transmit both the moving average and
+ * the last value in the current window to the SpikeDetector aggregator that is called next.
  * @author abhishekchatterjee
  *
  */
