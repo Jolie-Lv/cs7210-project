@@ -1,4 +1,4 @@
-package movingAverageWithSpikeDetection;
+package lightDetection.movingAverage.spikeDetection;
 
 import java.util.Map;
 import java.util.Random;
@@ -31,28 +31,27 @@ public class InputStreamSpout implements IRichSpout {
 
 	@Override
 	public void nextTuple() {		
-		//for(; count > 0 ; count--) {
 		/**
 		 * Trying to reduce the number of spikes in this fake stream.
 		 */
 		double randomometer = random.nextDouble();
-		double tolerance = 0.999; //Change this to limit the number of spikes that appear.
+		double tolerance = 0.95; //Change this to limit the number of spikes that appear.
 		if(randomometer - tolerance >= 0)
 			randomometer *= 10.0;
 		else
 			randomometer *= 2.0;
 		collector.emit(new Values(deviceID, randomometer + 50));
-		//collector.emit(new Values(deviceID, (random.nextDouble() * 10) + 50));			
-		//}
-		//collector.emit(new Values(deviceID, -1.0));
+		
 		/**
 		 * Comment out this block if you want instant results instead of plausible ones.
 		 */
+		/*
 		try {
 			Thread.sleep(5);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	@Override
@@ -69,7 +68,8 @@ public class InputStreamSpout implements IRichSpout {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("string","double"));
+		//Field types: String, double
+		declarer.declare(new Fields("device_id","value"));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package movingAverageWithSpikeDetection;
+package lightDetection.movingAverage.spikeDetection;
 
 import java.util.Map;
 
@@ -132,7 +132,8 @@ public class LightEventSpout implements IRichSpout, SerialPortEventListener {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("string","double"));
+		// Field types: String, double
+		declarer.declare(new Fields("device_id","value"));
 	}
 
 	@Override

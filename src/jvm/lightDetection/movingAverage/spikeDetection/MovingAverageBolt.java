@@ -1,4 +1,4 @@
-package movingAverageWithSpikeDetection;
+package lightDetection.movingAverage.spikeDetection;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -70,7 +70,8 @@ public class MovingAverageBolt implements IBasicBolt {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("string", "double1", "double2"));
+		//Field types: String, double, double
+		declarer.declare(new Fields("device_id", "value", "moving_average"));
 	}
 
 	@Override

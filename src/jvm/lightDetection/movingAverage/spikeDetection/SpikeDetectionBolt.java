@@ -1,4 +1,4 @@
-package movingAverageWithSpikeDetection;
+package lightDetection.movingAverage.spikeDetection;
 
 
 import java.util.Map;
@@ -32,8 +32,8 @@ public class SpikeDetectionBolt implements IBasicBolt {
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final String deviceID = tuple.getString(0);
-		final double movingAverageInstant = tuple.getDouble(1);
-		final double nextDouble = tuple.getDouble(2);
+		final double movingAverageInstant = tuple.getDouble(2);
+		final double nextDouble = tuple.getDouble(1);
 		if (Math.abs(nextDouble - movingAverageInstant) > spikeThreshold * movingAverageInstant) {
 			collector.emit(new Values(deviceID, movingAverageInstant, nextDouble, "spike detected"));
 			
@@ -50,7 +50,8 @@ public class SpikeDetectionBolt implements IBasicBolt {
 	
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("string1", "double1", "double2", "string2"));
+		//Field types: String, double, double, String
+		declarer.declare(new Fields("device_id", "value", "moving_average", "msg"));
 	}
 
 	@Override

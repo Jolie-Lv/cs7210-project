@@ -1,4 +1,4 @@
-package movingAverageWithSpikeDetection;
+package lightDetection.movingAverage.spikeDetection;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
