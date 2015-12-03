@@ -19,6 +19,11 @@ import storm.trident.tuple.TridentTuple;
  */
 public class MovingAverage implements Aggregator<Map<String, List<Double>>> {
 	private double sum = 0.0;
+	private Double startTimeMillis = null;
+	
+	public MovingAverage(Double startTimeMillis) {
+		this.startTimeMillis = startTimeMillis;
+	}
 	
 	@Override
 	public void prepare(Map conf, TridentOperationContext context) {
@@ -46,10 +51,11 @@ public class MovingAverage implements Aggregator<Map<String, List<Double>>> {
 		sum = sumOfEvents(values);
 		double avg = sum/values.size();
 		double last_val = values.get(values.size()-1);
-		ArrayList<Double> pair = new ArrayList<Double>();
-		pair.add(avg);
-		pair.add(last_val);
-		val.put(device_id, pair);
+		ArrayList<Double> triple = new ArrayList<Double>();
+		triple.add(avg);
+		triple.add(last_val);
+		triple.add((new Double(System.currentTimeMillis() - this.startTimeMillis)/1000));
+		val.put(device_id, triple);
 	}
 	
 	private static Double sumOfEvents(List<Double> events) {
@@ -61,7 +67,7 @@ public class MovingAverage implements Aggregator<Map<String, List<Double>>> {
 
 	@Override
 	public void complete(Map<String, List<Double>> val, TridentCollector collector) {
-		//System.out.println(String.format("MovingAverage: %s", val));
+		System.out.println(String.format("MovingAverage: %s", val));
 		collector.emit(new Values(val));
 	}
 

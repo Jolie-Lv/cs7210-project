@@ -32,15 +32,20 @@ public class InputStreamSpout implements IRichSpout {
 	@Override
 	public void nextTuple() {		
 		/**
+		 * Everyone loves periodicity, and M. thinks this makes more sense.
+		 */
+		double randomometer = Math.sin((new Double(System.currentTimeMillis())/1000));
+		/**
 		 * Trying to reduce the number of spikes in this fake stream.
 		 */
+		/*
 		double randomometer = random.nextDouble();
 		double tolerance = 0.95; //Change this to limit the number of spikes that appear.
 		if(randomometer - tolerance >= 0)
 			randomometer *= 10.0;
 		else
-			randomometer *= 2.0;
-		collector.emit(new Values(deviceID, randomometer + 50));
+			randomometer *= 2.0; */
+		collector.emit(new Values(deviceID, randomometer*1000 + 5000));
 		
 		/**
 		 * Comment out this block if you want instant results instead of plausible ones.

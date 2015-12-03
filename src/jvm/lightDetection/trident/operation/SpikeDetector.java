@@ -1,5 +1,6 @@
 package lightDetection.trident.operation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,10 @@ import storm.trident.tuple.TridentTuple;
  * @author abhishekchatterjee
  *
  */
-public class SpikeDetector implements Aggregator<Map<String, String>> {
+public class SpikeDetector implements Aggregator<Map<String, List<String>>> {
 	private float spikeThreshold = 0.03f;
+	private int partitionId;
+    private int numPartitions;
 	
 	public SpikeDetector() {
 		
@@ -31,8 +34,8 @@ public class SpikeDetector implements Aggregator<Map<String, String>> {
 
 	@Override
 	public void prepare(Map conf, TridentOperationContext context) {
-		// TODO Auto-generated method stub
-		
+		this.partitionId = context.getPartitionIndex();
+        this.numPartitions = context.numPartitions();
 	}
 
 	@Override
@@ -42,30 +45,36 @@ public class SpikeDetector implements Aggregator<Map<String, String>> {
 	}
 
 	@Override
-	public Map<String, String> init(Object batchId, TridentCollector collector) {
-		return new HashMap<String, String>();
+	public Map<String, List<String>> init(Object batchId, TridentCollector collector) {
+		return new HashMap<String, List<String>>();
 	}
 
 	@Override
-	public void aggregate(Map<String, String> val, TridentTuple tuple, TridentCollector collector) {
+	public void aggregate(Map<String, List<String>> val, TridentTuple tuple, TridentCollector collector) {
 		String device_id = tuple.getString(0);
 		Object thing = tuple.get(1);
 		HashMap<String, List<Double>> map;
 		if(thing instanceof HashMap<?,?>)
 			map = (HashMap<String, List<Double>>) thing;
 		else return;
-		List<Double> pair = map.get(device_id);
-		double avg = pair.get(0);
-		double last_val = pair.get(1);
-		String msg = ": avg = " + avg + "   last_val = " + last_val;
-		if (Math.abs(last_val - avg) > spikeThreshold * avg)
-			msg += "   spike detected at : " + (new DateTime()).toString();
-		val.put(device_id, msg);
+		List<Double> triple = map.get(device_id);
+		double avg = triple.get(0);
+		double last_val = triple.get(1);
+		double last_time = triple.get(2);
+		List<String> msg = new ArrayList<String>();
+		msg.add(String.format("Spike Detector [%s/%s]", partitionId, numPartitions));
+		msg.add(String.format("%s", avg));
+		msg.add(String.format("%s", last_val));
+		msg.add(String.format("%s", last_time));
+		if (Math.abs(last_val - avg) > spikeThreshold * avg) {
+			msg.add("spike detected at : " + (new DateTime()).toString());
+			val.put(device_id, msg);
+		}
 	}
 
 	@Override
-	public void complete(Map<String, String> val, TridentCollector collector) {
-		System.out.println("SpikeDetector: " + val);
+	public void complete(Map<String, List<String>> val, TridentCollector collector) {
+		//System.out.println(val);
 		collector.emit(new Values(val));
 	}
 }
