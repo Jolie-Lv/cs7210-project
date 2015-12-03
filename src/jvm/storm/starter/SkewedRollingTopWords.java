@@ -24,17 +24,18 @@ import backtype.storm.tuple.Fields;
 import org.apache.log4j.Logger;
 import storm.starter.bolt.IntermediateRankingsBolt;
 import storm.starter.bolt.RollingCountBolt;
+import storm.starter.bolt.RollingCountAggBolt;
 import storm.starter.bolt.TotalRankingsBolt;
 import storm.starter.util.StormRunner;
 
 /**
  * This topology does a continuous computation of the top N words that the topology has seen in terms of cardinality.
  * The top N computation is done in a completely scalable way, and a similar approach could be used to compute things
- * like trending topics or trending images on Twitter.
+ * like trending topics or trending images on Twitter. It takes an approach that assumes that some works will be much
+ * more common then other words, and uses partialKeyGrouping to better balance the skewed load.
  */
-public class RollingTopWords {
-
-  private static final Logger LOG = Logger.getLogger(RollingTopWords.class);
+public class SkewedRollingTopWords {
+  private static final Logger LOG = Logger.getLogger(SkewedRollingTopWords.class);
   private static final int DEFAULT_RUNTIME_IN_SECONDS = 60;
   private static final int TOP_N = 5;
 
@@ -43,7 +44,7 @@ public class RollingTopWords {
   private final Config topologyConfig;
   private final int runtimeInSeconds;
 
-  public RollingTopWords(String topologyName) throws InterruptedException {
+  public SkewedRollingTopWords(String topologyName) throws InterruptedException {
     builder = new TopologyBuilder();
     this.topologyName = topologyName;
     topologyConfig = createTopologyConfiguration();
@@ -61,12 +62,13 @@ public class RollingTopWords {
   private void wireTopology() throws InterruptedException {
     String spoutId = "wordGenerator";
     String counterId = "counter";
+    String aggId = "aggregator";
     String intermediateRankerId = "intermediateRanker";
     String totalRankerId = "finalRanker";
     builder.setSpout(spoutId, new TestWordSpout(), 5);
-    builder.setBolt(counterId, new RollingCountBolt(9, 3), 4).fieldsGrouping(spoutId, new Fields("word"));
-    builder.setBolt(intermediateRankerId, new IntermediateRankingsBolt(TOP_N), 4).fieldsGrouping(counterId, new Fields(
-        "obj"));
+    builder.setBolt(counterId, new RollingCountBolt(9, 3), 4).partialKeyGrouping(spoutId, new Fields("word"));
+    builder.setBolt(aggId, new RollingCountAggBolt(), 4).fieldsGrouping(counterId, new Fields("obj"));
+    builder.setBolt(intermediateRankerId, new IntermediateRankingsBolt(TOP_N), 4).fieldsGrouping(aggId, new Fields("obj"));
     builder.setBolt(totalRankerId, new TotalRankingsBolt(TOP_N)).globalGrouping(intermediateRankerId);
   }
 
@@ -117,7 +119,7 @@ public class RollingTopWords {
     }
 
     LOG.info("Topology name: " + topologyName);
-    RollingTopWords rtw = new RollingTopWords(topologyName);
+    SkewedRollingTopWords rtw = new SkewedRollingTopWords(topologyName);
     if (runLocally) {
       LOG.info("Running in local mode");
       rtw.runLocally();

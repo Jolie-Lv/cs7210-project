@@ -31,15 +31,23 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 import java.util.Map;
 
 /**
  * This is a basic example of a Storm topology.
  */
-public class ExclamationTopology {
-
-  public static class ExclamationBolt extends BaseRichBolt {
+public class MultipleLoggerTopology {
+  public static class ExclamationLoggingBolt extends BaseRichBolt {
     OutputCollector _collector;
+    Logger _rootLogger = LoggerFactory.getLogger (Logger.ROOT_LOGGER_NAME);
+    // ensure the loggers are configured in the worker.xml before
+    // trying to use them here
+    Logger _logger = LoggerFactory.getLogger ("com.myapp");
+    Logger _subLogger = LoggerFactory.getLogger ("com.myapp.sub");
 
     @Override
     public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
@@ -48,6 +56,21 @@ public class ExclamationTopology {
 
     @Override
     public void execute(Tuple tuple) {
+      _rootLogger.debug ("root: This is a DEBUG message");
+      _rootLogger.info ("root: This is an INFO message");
+      _rootLogger.warn ("root: This is a WARN message");
+      _rootLogger.error ("root: This is an ERROR message");
+
+      _logger.debug ("myapp: This is a DEBUG message");
+      _logger.info ("myapp: This is an INFO message");
+      _logger.warn ("myapp: This is a WARN message");
+      _logger.error ("myapp: This is an ERROR message");
+
+      _subLogger.debug ("myapp.sub: This is a DEBUG message");
+      _subLogger.info ("myapp.sub: This is an INFO message");
+      _subLogger.warn ("myapp.sub: This is a WARN message");
+      _subLogger.error ("myapp.sub: This is an ERROR message");
+
       _collector.emit(tuple, new Values(tuple.getString(0) + "!!!"));
       _collector.ack(tuple);
     }
@@ -56,27 +79,22 @@ public class ExclamationTopology {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
       declarer.declare(new Fields("word"));
     }
-
-
   }
 
   public static void main(String[] args) throws Exception {
     TopologyBuilder builder = new TopologyBuilder();
 
     builder.setSpout("word", new TestWordSpout(), 10);
-    builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
-    builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclaim1");
+    builder.setBolt("exclaim1", new ExclamationLoggingBolt(), 3).shuffleGrouping("word");
+    builder.setBolt("exclaim2", new ExclamationLoggingBolt(), 2).shuffleGrouping("exclaim1");
 
     Config conf = new Config();
     conf.setDebug(true);
 
     if (args != null && args.length > 0) {
-      conf.setNumWorkers(3);
-
+      conf.setNumWorkers(2);
       StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
-    }
-    else {
-
+    } else {
       LocalCluster cluster = new LocalCluster();
       cluster.submitTopology("test", conf, builder.createTopology());
       Utils.sleep(10000);
