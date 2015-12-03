@@ -18,6 +18,9 @@ import lightDetection.trident.operations.MovingAverage;
 import lightDetection.trident.operations.SpikeDetector;
 import storm.trident.TridentState;
 import storm.trident.TridentTopology;
+import storm.trident.operation.builtin.Count;
+import storm.trident.operation.builtin.MapGet;
+import storm.trident.testing.MemoryMapState;
 
 /**
  * 
@@ -33,7 +36,7 @@ public class TridentLightDetection {
 		Map<String, Double> deviceIDtoSumOfEvents = new HashMap<String, Double>();
 		
 		TridentTopology topology = new TridentTopology();
-		topology.newStream("spout", spout)
+		TridentState countState = topology.newStream("spout", spout)
 				.groupBy(new Fields("device_id"))
 				.aggregate(new Fields("device_id", "value"),
 						new DeviceAggregator(),
@@ -49,9 +52,11 @@ public class TridentLightDetection {
 				.aggregate(new Fields("device_id", "device_average"),
 						new SpikeDetector(),
 						new Fields("device_spikes"))
+				.persistentAggregate(new MemoryMapState.Factory(), new Count(), new Fields("count"))
 				.parallelismHint(2);
 		
-		//topology.newDRPCStream("lux", drpc);
+		topology.newDRPCStream("lumos", drpc)
+			.stateQuery(countState, new Fields("args"), new MapGet(), new Fields("count"));
 		
 		return topology.build();
 	}
@@ -68,7 +73,7 @@ public class TridentLightDetection {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("spike", conf, buildTopology(drpc));
             for (int i = 0; i < 100; i++) {
-                System.out.println("DRPC RESULT: " + drpc.execute("lux", "cat the dog jumped"));
+                System.out.println("DRPC RESULT: " + drpc.execute("lumos", null));
                 Thread.sleep(1000);
             }
             Utils.sleep(600000);
