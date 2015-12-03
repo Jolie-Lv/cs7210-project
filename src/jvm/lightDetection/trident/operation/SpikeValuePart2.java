@@ -16,7 +16,7 @@ public class SpikeValuePart2 extends BaseFunction {
 		// TODO Auto-generated method stub
 		List<Instance<Double>> duck = (List<Instance<Double>>) tuple.get(0);
 		Instance<Double> goose = duck.get(0);
-		System.out.println("SpikeValuePart2: " + goose);
+		System.out.println("SpikeValuePart2: " + goose + " ... spike detected!");
 		collector.emit(new Values(goose));
 	}
 

@@ -51,7 +51,8 @@ public class DeviceAggregator implements Aggregator<Map<String, List<Double>>> {
 	public void aggregate(Map<String, List<Double>> val, TridentTuple tuple, TridentCollector collector) {
 		// TODO Auto-generated method stub
 		String deviceID = tuple.getString(0);
-		double nextDouble = tuple.getDouble(1);
+		//double nextDouble = tuple.getDouble(1); //Comment this line and uncomment the next if using actual Arduino.
+		final double nextDouble = (double)tuple.getInteger(1);
         List<Double> values = val.get(deviceID);
         values = values == null ? new ArrayList<Double>() : values;
         if(values.size() >= movingAverageWindow)
@@ -62,7 +63,7 @@ public class DeviceAggregator implements Aggregator<Map<String, List<Double>>> {
 
 	@Override
 	public void complete(Map<String, List<Double>> val, TridentCollector collector) {
-		//System.out.println(String.format("DeviceAggregator: Partition %s out of %s partitions aggregated: %s", partitionId, numPartitions, val));
+		//System.out.println(String.format("DeviceAggregator: %s", val));
 		collector.emit(new Values(val));
 	}
 

@@ -45,7 +45,7 @@ public class InputStreamSpout implements IRichSpout {
 			randomometer *= 10.0;
 		else
 			randomometer *= 2.0; */
-		collector.emit(new Values(deviceID, randomometer*1000 + 5000));
+		collector.emit(new Values(deviceID, randomometer*1000 + 5000 + 100*Math.sin(2*Math.PI*random.nextDouble())));
 		
 		/**
 		 * Comment out this block if you want instant results instead of plausible ones.

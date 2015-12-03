@@ -54,7 +54,9 @@ public class MovingAverage implements Aggregator<Map<String, List<Double>>> {
 		ArrayList<Double> triple = new ArrayList<Double>();
 		triple.add(avg);
 		triple.add(last_val);
-		triple.add((new Double(System.currentTimeMillis() - this.startTimeMillis)/1000));
+		double newDouble = (new Double(System.currentTimeMillis() - this.startTimeMillis)/1000);
+		newDouble = (double) Math.round(newDouble * 1000d) / 1000d;
+		triple.add(newDouble);
 		val.put(device_id, triple);
 	}
 	
@@ -67,7 +69,7 @@ public class MovingAverage implements Aggregator<Map<String, List<Double>>> {
 
 	@Override
 	public void complete(Map<String, List<Double>> val, TridentCollector collector) {
-		System.out.println(String.format("MovingAverage: %s", val));
+		//System.out.println(String.format("MovingAverage: %s", val));
 		collector.emit(new Values(val));
 	}
 
