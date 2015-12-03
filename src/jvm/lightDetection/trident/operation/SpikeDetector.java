@@ -1,4 +1,4 @@
-package lightDetection.trident.operations;
+package lightDetection.trident.operation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,8 @@ import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 
 /**
- * An aggregator that detects spikes.
+ * An aggregator that detects spikes based on a constant threshold, the moving average,
+ * and the last value seen.
  * @author abhishekchatterjee
  *
  */
@@ -48,7 +49,11 @@ public class SpikeDetector implements Aggregator<Map<String, String>> {
 	@Override
 	public void aggregate(Map<String, String> val, TridentTuple tuple, TridentCollector collector) {
 		String device_id = tuple.getString(0);
-		HashMap<String, List<Double>> map = (HashMap<String, List<Double>>) tuple.get(1);
+		Object thing = tuple.get(1);
+		HashMap<String, List<Double>> map;
+		if(thing instanceof HashMap<?,?>)
+			map = (HashMap<String, List<Double>>) thing;
+		else return;
 		List<Double> pair = map.get(device_id);
 		double avg = pair.get(0);
 		double last_val = pair.get(1);
@@ -63,5 +68,4 @@ public class SpikeDetector implements Aggregator<Map<String, String>> {
 		System.out.println("SpikeDetector: " + val);
 		collector.emit(new Values(val));
 	}
-
 }

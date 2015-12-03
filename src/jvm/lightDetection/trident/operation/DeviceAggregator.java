@@ -1,4 +1,4 @@
-package lightDetection.trident.operations;
+package lightDetection.trident.operation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
